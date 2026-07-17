@@ -14,7 +14,7 @@ $devcmd> build.bat /?
 
 
 ## CFG
-[Cfg.md](cfg.md)
+[Cfg.md](Cfg.md)
 
 
 ## SPI
