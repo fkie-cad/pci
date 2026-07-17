@@ -1,0 +1,179 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{88cf7151-31d8-460e-bee2-b0aa37ce7742}</ProjectGuid>
+    <RootNamespace>$(MSBuildProjectName)</RootNamespace>
+    <Configuration Condition="'$(Configuration)' == ''">Release</Configuration>
+    <Platform Condition="'$(Platform)' == ''">x64</Platform>
+    <ReadOnlyProject>true</ReadOnlyProject>
+  </PropertyGroup>
+  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  
+  <PropertyGroup Label="Configuration">
+    <TargetVersion>Windows10</TargetVersion>
+    <!--<TargetPlatform>Desktop</TargetPlatform>-->
+    <!--<DriverTargetPlatform>Desktop</DriverTargetPlatform>-->
+    <DriverType>WDM</DriverType>
+    <PlatformToolset>WindowsKernelModeDriver10.0</PlatformToolset>
+    <ConfigurationType>Driver</ConfigurationType>
+  </PropertyGroup>
+  
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Release'">
+    <UseDebugLibraries>False</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration" Condition="'$(Configuration)'=='Debug'">
+    <UseDebugLibraries>True</UseDebugLibraries>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" />
+  </ImportGroup>
+
+  <ItemGroup Label="WrappedTaskItems" />
+
+  <PropertyGroup Condition="'$(TestSign)'=='0'">
+    <SignMode>Off</SignMode>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetName>$(SubProj)</TargetName>
+  </PropertyGroup>
+  
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>build\64\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <OutDir>build\debug\64\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup>
+    <IntDir>$(OutDir)\$(MSBuildProjectName)\</IntDir>
+  </PropertyGroup>
+  
+  <ItemDefinitionGroup>
+    <Link>
+      <AdditionalOptions>/GUARD:cf %(AdditionalOptions)</AdditionalOptions>
+      <!-- <ControlFlowGuard>true</ControlFlowGuard> -->
+      <AdditionalDependencies>%(AdditionalDependencies);</AdditionalDependencies>
+    </Link>
+    <ClCompile>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <WarningLevel>Level4</WarningLevel>
+      <EnablePREfast>true</EnablePREfast>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+      <ExceptionHandling></ExceptionHandling>
+      <PrecompiledHeader></PrecompiledHeader>
+      <!--<BufferSecurityCheck>false</BufferSecurityCheck> --> <!-- /GS- -->
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <!--<FunctionLevelLinking>true</FunctionLevelLinking>-->
+      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <!--<LanguageStandard>c99</LanguageStandard>-->
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <AdditionalOptions>/GS %(AdditionalOptions)</AdditionalOptions>
+      <GuardCF>true</GuardCF>
+    </ClCompile>
+    <ResourceCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Midl>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);</AdditionalIncludeDirectories>
+    </Midl>
+    <DriverSign>
+      <FileDigestAlgorithm>sha256</FileDigestAlgorithm>
+    </DriverSign>
+  </ItemDefinitionGroup>
+  
+  <!-- subproj dependent additional libs -->
+  <!-- <ItemDefinitionGroup Condition="'$(SubProj)'=='SysTab'"> -->
+    <!-- <Link> -->
+      <!-- <AdditionalDependencies>%(AdditionalDependencies);Aux_Klib.lib;</AdditionalDependencies> -->
+    <!-- </Link> -->
+  <!-- </ItemDefinitionGroup> -->
+  
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Release'">
+    <ClCompile>
+      <Optimization>MaxSpeed</Optimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)'=='Debug'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  
+  <ItemDefinitionGroup Condition="'$(RunTimeLib)'=='Release'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(RunTimeLib)'=='Debug'">
+    <ClCompile>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  
+  <ItemDefinitionGroup Condition="'$(PDB)'!='1'">
+    <ClCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <DebugInformationFormat>None</DebugInformationFormat>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
+      <AdditionalOptions>/NOCOFFGRPINFO %(AdditionalOptions)</AdditionalOptions>
+      <Profile>false</Profile>
+    </Link>
+  </ItemDefinitionGroup>
+
+
+  <ItemDefinitionGroup Condition="'$(DebugPrint)'!='0' And '$(DebugPrint)'!=''">
+    <ClCompile>
+      <PreprocessorDefinitions>DEBUG_PRINT=$(DebugPrint);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <ItemDefinitionGroup Condition="'$(ErrorPrint)'=='1'">
+    <ClCompile>
+      <PreprocessorDefinitions>ERROR_PRINT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <ItemGroup Condition="'$(SubProj)'=='MemIo' Or '$(SubProj)'==''">
+    <ClCompile Include="src\sys\memio.c;" />
+  </ItemGroup>
+  
+  <!-- <ItemGroup Condition="'$(SubProj)'=='Cfg' Or '$(SubProj)'=='Spi' Or '$(SubProj)'==''"> -->
+  <ItemGroup>
+    <ClCompile Include="src\common\kfileio.c;" />
+  </ItemGroup>
+  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  
+  <Target Name="DisplayMessages" AfterTargets="Build">
+    <Message Text="PlatformToolset = $(PlatformToolset)" />
+    <Message Text="Project Name = $(MSBuildProjectName)" />
+    <Message Text="Project File Name = $(MSBuildProjectFile)" />
+    <Message Text="ConfigurationType = $(ConfigurationType)" />
+    <Message Text="Configuration = $(Configuration)" />
+    <Message Text="Platform = $(Platform)" />
+    <Message Text="RunTimeLib = $(RunTimeLib)" />
+    <Message Text="IntDir = $(IntDir)" />
+    <Message Text="OutDir = $(OutDir)" />
+    <Message Text="TargetPath = $(TargetPath)" />
+    <Message Text="DebugPrint = $(DebugPrint)" />
+    <Message Text="ErrorPrint = $(ErrorPrint)" />
+  </Target>
+</Project>
