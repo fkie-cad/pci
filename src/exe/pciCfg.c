@@ -7,7 +7,7 @@
 #include <winerror.h>
 #else
 #define __cdecl
-#include "inc/error.h"
+#define ERROR_INVALID_PARAMETER (1)
 #endif
 
 #include "../print.h"

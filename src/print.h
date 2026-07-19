@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stdint.h>
+
 //
 // DbgPrint and DbgPrintEx can be called at IRQL<=DIRQL (Dispatch level). 
 // However, Unicode format codes (%C, %S, %lc, %ls, %wc, %ws, and %wZ) can be used only at IRQL=PASSIVE_LEVEL. 
@@ -28,11 +30,13 @@
 #define DPRINT_PREFIX DRIVER_NAME ": "
 #define EPRINT_PREFIX DRIVER_NAME
 
+#ifdef _WIN32
 #define uint8_t UINT8
 #define uint16_t UINT16
 #define uint32_t UINT32
 #define uint64_t UINT64
 #define size_t SIZE_T
+#endif
 #endif
 
 #ifndef DRIVER_NAME
